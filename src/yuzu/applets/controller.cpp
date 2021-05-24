@@ -56,7 +56,7 @@ void UpdateController(Settings::ControllerType controller_type, std::size_t npad
 
 // Returns true if the given controller type is compatible with the given parameters.
 bool IsControllerCompatible(Settings::ControllerType controller_type,
-                            Core::Frontend::ControllerParameters parameters) {
+                            Core::Frontend::ControllerParameters parameters, bool is_handheld) {
     switch (controller_type) {
     case Settings::ControllerType::ProController:
         return parameters.allow_pro_controller;
@@ -67,7 +67,7 @@ bool IsControllerCompatible(Settings::ControllerType controller_type,
     case Settings::ControllerType::RightJoycon:
         return parameters.allow_right_joycon;
     case Settings::ControllerType::Handheld:
-        return parameters.enable_single_mode && parameters.allow_handheld;
+        return parameters.enable_single_mode && parameters.allow_handheld && is_handheld;
     case Settings::ControllerType::GameCube:
         return parameters.allow_gamecube_controller;
     default:
@@ -75,7 +75,7 @@ bool IsControllerCompatible(Settings::ControllerType controller_type,
     }
 }
 
-} // namespace
+} // Anonymous namespace
 
 QtControllerSelectorDialog::QtControllerSelectorDialog(
     QWidget* parent, Core::Frontend::ControllerParameters parameters_,
@@ -327,7 +327,8 @@ bool QtControllerSelectorDialog::CheckIfParametersMet() {
             }
 
             const auto compatible = IsControllerCompatible(
-                GetControllerTypeFromIndex(emulated_controllers[index]->currentIndex(), index),
+                GetControllerTypeFromIndex(emulated_controllers[index]->currentIndex(), index,
+                                           ui->radioUndocked->isChecked()),
                 parameters);
 
             // If any controller is found to be incompatible, return false early.
