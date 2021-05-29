@@ -2123,7 +2123,7 @@ void GMainWindow::OnMenuInstallToNAND() {
         return;
     }
 
-    InstallDialog installDialog(this, filenames);
+    InstallDialog installDialog(this, vfs, filenames);
     if (installDialog.exec() == QDialog::Rejected) {
         return;
     }
